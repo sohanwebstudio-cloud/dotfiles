@@ -4,13 +4,18 @@ set $term kitty
 set $menu wofi --show drun
 set $lock swaylock -f -c 1e1e2e
 
-# ── Pywal ──────────────────────────────────────────────────────────────────────
-include ~/.cache/wal/colors-sway
+# ── Couleurs (Catppuccin Mocha) ────────────────────────────────────────────────
+set $background #1e1e2e
+set $foreground #cdd6f4
+set $color1     #89b4fa
+set $color2     #a6e3a1
+set $color3     #fab387
+set $color8     #45475a
 
 # ── Moniteurs ─────────────────────────────────────────────────────────────────
 # Config auto au premier lancement
 # Après : swaymsg -t get_outputs → éditer ici avec les vrais noms
-output * bg $wallpaper fill
+output * bg /home/sohan/Pictures/Wallpaper_picker/bloom.jpg fill
 
 # Exemples à décommenter une fois les noms connus :
 # output eDP-1    resolution 1920x1080  position 0,0     scale 1
@@ -30,7 +35,7 @@ input type:touchpad {
 gaps inner 4
 gaps outer 8
 default_border pixel 2
-smart_gaps on
+smart_gaps off
 smart_borders on
 
 # Pywal — active / inactive / urgent
@@ -41,7 +46,7 @@ client.focused_inactive $color8     $background $foreground $color8     $color8
 client.urgent           $color3     $background $foreground $color3     $color3
 
 # ── Services ──────────────────────────────────────────────────────────────────
-exec_always wal -R -q
+exec wal -R -q
 exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 
@@ -63,10 +68,8 @@ bindsym $mod+e exec kitty -e yazi
 bindsym $mod+n exec kitty nvim
 bindsym $mod+v exec code
 bindsym $mod+c exec google-chrome --new-window
-bindsym $mod+b exec google-chrome --new-window
 bindsym $mod+Shift+o exec flatpak run md.obsidian.Obsidian
 bindsym $mod+mod1+c exec google-chrome --app=https://calendar.google.com
-bindsym $mod+mod1+g exec /opt/google/chrome/google-chrome --profile-directory=Default --app-id=fmgjjmmmlfnkbppncabfkddbjimcfncm
 bindsym $mod+space exec $menu
 bindsym $mod+w exec /home/sohan/.local/bin/wallpaper-picker
 bindsym $mod+Escape exec $lock

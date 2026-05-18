@@ -49,7 +49,7 @@
         "format-ethernet": "󰈀  {ipaddr}",
         "format-disconnected": "󰤭 ",
         "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
-        "on-click": "kitty --title nmtui nmtui"
+        "on-click": "kitty --title nmtui nmtui-wal"
     },
 
     "pulseaudio": {

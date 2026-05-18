@@ -70,9 +70,9 @@ window#waybar {
 #pulseaudio { color: @mauve; padding: 0 8px; }
 #tray       { padding: 0 8px; }
 
-#custom-power-profile { padding: 0 8px; color: @green; }
-#custom-power-profile.performance { color: @red; }
-#custom-power-profile.balanced    { color: @green; }
-#custom-power-profile.power-saver { color: @blue; }
+#custom-power-profile { padding: 0 8px; }
+#custom-power-profile.performance { color: #FF5555; }
+#custom-power-profile.balanced    { color: #50FA7B; }
+#custom-power-profile.power-saver { color: #8BE9FD; }
 
 #custom-power { padding: 0 12px 0 8px; color: @red; }

@@ -55,3 +55,4 @@ export EDITOR=nvim
 export VISUAL=nvim
 
 alias sxiv='sxiv -n 300'
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
