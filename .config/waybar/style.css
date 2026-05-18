@@ -1,0 +1,78 @@
+/* pywal */
+@import "/home/sohan/.cache/wal/colors-waybar.css";
+
+@define-color base     @background;
+@define-color text     @foreground;
+@define-color subtext0 @color8;
+@define-color surface0 @color0;
+@define-color surface1 @color8;
+@define-color mauve    @color5;
+@define-color blue     @color4;
+@define-color green    @color2;
+@define-color yellow   @color3;
+@define-color red      @color1;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: alpha(@base, 0.85);
+    color: @text;
+    border-radius: 8px;
+}
+
+.modules-left, .modules-center, .modules-right {
+    background: transparent;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    color: @subtext0;
+    background: transparent;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+#workspaces button.active {
+    color: @mauve;
+    background: @surface0;
+    font-weight: bold;
+}
+
+#workspaces button:hover {
+    background: @surface1;
+    color: @text;
+}
+
+#window {
+    color: @subtext0;
+    padding: 0 8px;
+}
+
+#clock {
+    color: @blue;
+    font-weight: bold;
+    padding: 0 12px;
+}
+
+#cpu    { color: @green; padding: 0 8px; }
+#memory { color: @yellow; padding: 0 8px; }
+#battery { padding: 0 8px; }
+#battery.warning  { color: @yellow; }
+#battery.critical { color: @red; }
+
+#network    { color: @blue; padding: 0 8px; }
+#pulseaudio { color: @mauve; padding: 0 8px; }
+#tray       { padding: 0 8px; }
+
+#custom-power-profile { padding: 0 8px; color: @green; }
+#custom-power-profile.performance { color: @red; }
+#custom-power-profile.balanced    { color: @green; }
+#custom-power-profile.power-saver { color: @blue; }
+
+#custom-power { padding: 0 12px 0 8px; color: @red; }

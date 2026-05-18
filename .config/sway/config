@@ -1,0 +1,170 @@
+# ── Variables ─────────────────────────────────────────────────────────────────
+set $mod Mod4
+set $term kitty
+set $menu wofi --show drun
+set $lock swaylock -f -c 1e1e2e
+
+# ── Pywal ──────────────────────────────────────────────────────────────────────
+include ~/.cache/wal/colors-sway
+
+# ── Moniteurs ─────────────────────────────────────────────────────────────────
+# Config auto au premier lancement
+# Après : swaymsg -t get_outputs → éditer ici avec les vrais noms
+output * bg $wallpaper fill
+
+# Exemples à décommenter une fois les noms connus :
+# output eDP-1    resolution 1920x1080  position 0,0     scale 1
+# output DP-1     resolution 2560x1440  position 1920,0  scale 1
+# output DP-2     resolution 3840x2160  position 4480,0  scale 1.5
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+input type:keyboard {
+    xkb_layout us
+}
+input type:touchpad {
+    natural_scroll enabled
+    tap enabled
+}
+
+# ── Apparence ─────────────────────────────────────────────────────────────────
+gaps inner 4
+gaps outer 8
+default_border pixel 2
+smart_gaps on
+smart_borders on
+
+# Pywal — active / inactive / urgent
+# class                 border      bg          text        indicator   child_border
+client.focused          $color1     $background $foreground $color2     $color1
+client.unfocused        $color8     $background $foreground $color8     $color8
+client.focused_inactive $color8     $background $foreground $color8     $color8
+client.urgent           $color3     $background $foreground $color3     $color3
+
+# ── Services ──────────────────────────────────────────────────────────────────
+exec_always wal -R -q
+exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+
+exec mako
+exec waybar
+exec wl-paste --type text --watch cliphist store
+exec /usr/libexec/lxqt-policykit-agent
+exec mkdir -p ~/Pictures/Screenshots
+
+exec swayidle -w \
+    timeout 300 'swaymsg "output * dpms off"' \
+    resume 'swaymsg "output * dpms on"' \
+    timeout 600 '$lock' \
+    before-sleep '$lock'
+
+# ── Apps — mêmes raccourcis que GNOME ────────────────────────────────────────
+bindsym $mod+t exec $term
+bindsym $mod+e exec kitty -e yazi
+bindsym $mod+n exec kitty nvim
+bindsym $mod+v exec code
+bindsym $mod+c exec google-chrome --new-window
+bindsym $mod+b exec google-chrome --new-window
+bindsym $mod+Shift+o exec flatpak run md.obsidian.Obsidian
+bindsym $mod+mod1+c exec google-chrome --app=https://calendar.google.com
+bindsym $mod+mod1+g exec /opt/google/chrome/google-chrome --profile-directory=Default --app-id=fmgjjmmmlfnkbppncabfkddbjimcfncm
+bindsym $mod+space exec $menu
+bindsym $mod+w exec /home/sohan/.local/bin/wallpaper-picker
+bindsym $mod+Escape exec $lock
+
+# ── Fenêtres ──────────────────────────────────────────────────────────────────
+bindsym $mod+q kill
+bindsym $mod+f exec dolphin
+
+bindsym $mod+m fullscreen toggle
+bindsym $mod+Shift+space floating toggle
+
+# ── Focus (vim-style) ─────────────────────────────────────────────────────────
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# ── Move windows ──────────────────────────────────────────────────────────────
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# ── Resize ────────────────────────────────────────────────────────────────────
+bindsym $mod+Left resize grow width 50px
+bindsym $mod+Right  resize shrink width 50px
+bindsym $mod+Down  resize grow height 50px
+bindsym $mod+Up    resize shrink height 50px
+
+# ── Workspaces ────────────────────────────────────────────────────────────────
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+bindsym $mod+ctrl+Right workspace next
+bindsym $mod+ctrl+Left  workspace prev
+bindsym $mod+ctrl+l     workspace next
+bindsym $mod+ctrl+h     workspace prev
+
+# ── Mouse ─────────────────────────────────────────────────────────────────────
+floating_modifier $mod normal
+
+# ── Screenshot ────────────────────────────────────────────────────────────────
+bindsym Print exec grimshot savecopy screen ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png
+bindsym Shift+Print exec grimshot savecopy area ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png
+bindsym $mod+Print exec grimshot savecopy window ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png
+
+# ── Clipboard ─────────────────────────────────────────────────────────────────
+bindsym $mod+a exec cliphist list | wofi --dmenu | cliphist decode | wl-copy
+
+# ── Audio ─────────────────────────────────────────────────────────────────────
+bindsym XF86AudioRaiseVolume exec pamixer -i 5
+bindsym XF86AudioLowerVolume exec pamixer -d 5
+bindsym XF86AudioMute exec pamixer -t
+bindsym XF86AudioMicMute exec pamixer --default-source -t
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+# ── Luminosité ────────────────────────────────────────────────────────────────
+bindsym XF86MonBrightnessUp exec brightnessctl s 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
+
+# ── Window rules ──────────────────────────────────────────────────────────────
+for_window [app_id="wofi"] floating enable, border none
+for_window [app_id="pavucontrol"] floating enable
+for_window [app_id="nm-connection-editor"] floating enable
+for_window [title="Picture-in-Picture"] floating enable, sticky enable
+for_window [app_id="org.gnome.Calculator"] floating enable
+
+assign [app_id="code"] workspace number 2
+assign [app_id="firefox"] workspace number 3
+
+# ── Performance ───────────────────────────────────────────────────────────────
+bindsym $mod+F1 exec powerprofilesctl set power-saver && notify-send "CPU" "power-saver 🔋"
+bindsym $mod+F2 exec powerprofilesctl set balanced && notify-send "CPU" "balanced ⚖️"
+bindsym $mod+F3 exec powerprofilesctl set performance && notify-send "CPU" "performance 🚀"
+
+# ── Sway ──────────────────────────────────────────────────────────────────────
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+q exit
+
+include /etc/sway/config.d/*
