@@ -2,7 +2,7 @@
 set $mod Mod4
 set $term kitty
 set $menu wofi --show drun
-set $lock swaylock -f -c 1e1e2e
+set $lock swaylock -f --image $(cat /home/sohan/.cache/wal/wal) --scaling fill --ring-color 89b4fa --key-hl-color a6e3a1 --bs-hl-color f38ba8 --inside-color 1e1e2e99 --separator-color 00000000 --text-color cdd6f4
 
 # ── Couleurs (Catppuccin Mocha) ────────────────────────────────────────────────
 set $background #1e1e2e
@@ -57,17 +57,13 @@ exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
 exec swaymsg 'workspace number 2; move workspace to output eDP-1; workspace number 12; workspace number 1'
 exec rfkill unblock bluetooth
 exec mako
-exec_always pkill waybar; waybar 2>/dev/null
+exec_always pkill waybar; sleep 1 && waybar
 exec wl-paste --type text --watch cliphist store
 exec swayrd
 exec /usr/libexec/lxqt-policykit-agent
 exec mkdir -p ~/Pictures/Screenshots
 
-exec swayidle -w \
-    timeout 300 'swaymsg "output * dpms off"' \
-    resume 'swaymsg "output * dpms on"' \
-    timeout 600 '$lock' \
-    before-sleep '$lock'
+exec_always pkill swayidle; swayidle -w before-sleep '$lock'
 
 # ── Apps — mêmes raccourcis que GNOME ────────────────────────────────────────
 bindsym $mod+t exec $term
@@ -192,6 +188,7 @@ for_window [app_id="pavucontrol"] floating enable
 for_window [app_id="nm-connection-editor"] floating enable
 for_window [title="Picture-in-Picture"] floating enable, sticky enable
 for_window [app_id="org.gnome.Calculator"] floating enable
+for_window [title="khal"] floating enable, resize set 900 600, move position center
 
 assign [app_id="code"] workspace number 2
 assign [app_id="firefox"] workspace number 3

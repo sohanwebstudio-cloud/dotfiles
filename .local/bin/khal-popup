@@ -1,0 +1,4 @@
+#!/bin/sh
+kitty --title "khal" --override "background=#1e1e2e" --override "foreground=#cdd6f4" \
+  --override "color1=#89b4fa" --override "color2=#a6e3a1" \
+  -e ikhal

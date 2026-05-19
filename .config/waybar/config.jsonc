@@ -9,7 +9,7 @@
 
     "modules-left": ["sway/workspaces", "sway/window"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/power-profile", "pulseaudio", "bluetooth", "network", "cpu", "memory", "battery", "tray", "custom/power"],
+    "modules-right": ["custom/khal", "custom/power-profile", "pulseaudio", "bluetooth", "network", "cpu", "memory", "battery", "tray", "custom/power"],
 
     "sway/workspaces": {
         "format": "{id}",
@@ -79,6 +79,14 @@
         "format": "⏻",
         "on-click": "/home/sohan/.local/bin/power-menu",
         "tooltip": false
+    },
+
+    "custom/khal": {
+        "exec": "waybar-khal",
+        "return-type": "json",
+        "interval": 300,
+        "on-click": "khal-popup",
+        "tooltip": true
     },
 
     "custom/power-profile": {

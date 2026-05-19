@@ -1,0 +1,7 @@
+#!/bin/sh
+event=$(khal list today today 2>/dev/null | grep -v "^[A-Z]" | head -1 | sed 's/^ *//')
+if [ -z "$event" ]; then
+  echo '{"text": "󰃭 libre", "tooltip": "Aucun événement aujourd'\''hui"}'
+else
+  echo "{\"text\": \"󰃭 $event\", \"tooltip\": \"$(khal list today today 2>/dev/null | grep -v '^[A-Z]' | sed 's/^ *//' | tr '\n' '|' | sed 's/|$//' | sed 's/|/\n/g')\"}"
+fi
