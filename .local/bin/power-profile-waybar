@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Waybar custom module — power-profiles-daemon
+
+PROFILE=$(powerprofilesctl get)
+
+case "$PROFILE" in
+    performance)  ICON="󰓅" ;;
+    balanced)     ICON="󰾅" ;;
+    power-saver)  ICON="󰾆" ;;
+    *)            ICON="󰾅" ;;
+esac
+
+echo "{\"text\": \"$ICON $PROFILE\", \"class\": \"$PROFILE\", \"tooltip\": \"$PROFILE\"}"

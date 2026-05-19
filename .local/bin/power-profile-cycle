@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Cycle: power-saver → balanced → performance → power-saver
+
+PROFILE=$(powerprofilesctl get)
+
+case "$PROFILE" in
+    power-saver)  NEXT="balanced" ;;
+    balanced)     NEXT="performance" ;;
+    performance)  NEXT="power-saver" ;;
+    *)            NEXT="balanced" ;;
+esac
+
+powerprofilesctl set "$NEXT"
+notify-send "CPU" "$NEXT" -t 2000

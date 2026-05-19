@@ -1,0 +1,8 @@
+#!/bin/bash
+choice=$(echo -e "⏻  Éteindre\n  Redémarrer\n  Suspendre\n  Déconnexion" | wofi --dmenu --width 240 --height 250 --hide-search --style /home/sohan/.config/wofi/power-menu.css)
+case "$choice" in
+  *"Éteindre") systemctl poweroff ;;
+  *"Redémarrer") systemctl reboot ;;
+  *"Suspendre") systemctl suspend ;;
+  *"Déconnexion") swaymsg exit ;;
+esac
