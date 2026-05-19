@@ -1,0 +1,25 @@
+[calendars]
+
+[[sohan]]
+path = ~/.local/share/khal/calendars/sohanwebstudio@gmail.com/
+color = {color2}
+
+[[feries]]
+path = ~/.local/share/khal/calendars/cpp2spjicln66q13d1nmoqb4c5sk0pridtqn0bjm5phm2r35dpi62shectnmuprcckn66rrd@virtual/
+color = {color4}
+readonly = True
+
+[sqlite]
+path = ~/.local/share/khal/khal.db
+
+[locale]
+timeformat = %H:%M
+dateformat = %d/%m/%Y
+longdateformat = %A %d %B %Y
+datetimeformat = %d/%m/%Y %H:%M
+longdatetimeformat = %A %d %B %Y %H:%M
+firstweekday = 0
+default_timezone = Europe/Paris
+
+[view]
+bold_for_light_color = false

@@ -15,6 +15,7 @@ echo "[4] eDP-1 OK"
 echo "[5] Running wal..."
 /home/sohan/.local/bin/wal -R -q </dev/null
 echo "[6] wal done (exit $?)"
+cp ~/.cache/wal/khal ~/.config/khal/config 2>/dev/null || true
 
 echo "[7] Launching waybar..."
 while true; do
