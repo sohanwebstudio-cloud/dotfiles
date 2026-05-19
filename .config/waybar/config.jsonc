@@ -9,7 +9,7 @@
 
     "modules-left": ["sway/workspaces", "sway/window"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/power-profile", "pulseaudio", "network", "cpu", "memory", "battery", "tray", "custom/power"],
+    "modules-right": ["custom/power-profile", "pulseaudio", "bluetooth", "network", "cpu", "memory", "battery", "tray", "custom/power"],
 
     "sway/workspaces": {
         "format": "{id}",
@@ -44,6 +44,17 @@
         "format-icons": ["󰁺", "󰁼", "󰁾", "󰁿", "󰂁", "󰂂", "󰁹"]
     },
 
+    "bluetooth": {
+        "format": "󰂯",
+        "format-connected": "󰂱 {device_alias}",
+        "format-disabled": "󰂲",
+        "format-off": "󰂲",
+        "tooltip-format": "{controller_alias} — {controller_address}",
+        "tooltip-format-connected": "{controller_alias}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "on-click": "kitty --title bluetuith bluetuith-wal"
+    },
+
     "network": {
         "format-wifi": "  {essid}",
         "format-ethernet": "󰈀  {ipaddr}",
@@ -56,7 +67,7 @@
         "format": "{icon} {volume}%",
         "format-muted": "󰝟 ",
         "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
-        "on-click": "pavucontrol",
+        "on-click": "kitty --title pulsemixer pulsemixer",
         "scroll-step": 5
     },
 
