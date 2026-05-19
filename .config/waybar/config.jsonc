@@ -12,7 +12,7 @@
     "modules-right": ["custom/khal", "custom/power-profile", "pulseaudio", "bluetooth", "network", "cpu", "memory", "battery", "tray", "custom/power"],
 
     "sway/workspaces": {
-        "format": "{id}",
+        "format": "{name}",
         "on-click": "activate"
     },
 
