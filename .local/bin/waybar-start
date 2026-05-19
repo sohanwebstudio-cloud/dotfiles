@@ -1,0 +1,24 @@
+#!/bin/bash
+LOG=~/.cache/waybar-start.log
+exec >> "$LOG" 2>&1
+
+echo "=== $(date) ==="
+
+echo "[1] Waiting for sway IPC..."
+until swaymsg -t get_version >/dev/null 2>&1; do sleep 0.2; done
+echo "[2] Sway IPC OK"
+
+echo "[3] Waiting for eDP-1..."
+until swaymsg -t get_outputs 2>/dev/null | grep -q '"eDP-1"'; do sleep 0.3; done
+echo "[4] eDP-1 OK"
+
+echo "[5] Running wal..."
+/home/sohan/.local/bin/wal -R -q </dev/null
+echo "[6] wal done (exit $?)"
+
+echo "[7] Launching waybar..."
+while true; do
+    waybar
+    echo "[RESTART] waybar exited ($?), relance dans 2s..."
+    sleep 2
+done

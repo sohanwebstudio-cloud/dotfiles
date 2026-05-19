@@ -50,14 +50,13 @@ client.focused_inactive $color8     $background $foreground $color8     $color8
 client.urgent           $color3     $background $foreground $color3     $color3
 
 # ── Services ──────────────────────────────────────────────────────────────────
-exec wal -R -q
 exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 
 exec swaymsg 'workspace number 2; move workspace to output eDP-1; workspace number 12; workspace number 1'
 exec rfkill unblock bluetooth
 exec mako
-exec_always pkill waybar; sleep 1 && waybar
+exec /home/sohan/.local/bin/waybar-start
 exec wl-paste --type text --watch cliphist store
 exec swayrd
 exec /usr/libexec/lxqt-policykit-agent

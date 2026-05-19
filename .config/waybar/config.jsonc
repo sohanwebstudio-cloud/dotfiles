@@ -82,18 +82,18 @@
     },
 
     "custom/khal": {
-        "exec": "waybar-khal",
+        "exec": "/home/sohan/.local/bin/waybar-khal",
         "return-type": "json",
         "interval": 300,
-        "on-click": "khal-popup",
+        "on-click": "/home/sohan/.local/bin/khal-popup",
         "tooltip": true
     },
 
     "custom/power-profile": {
-        "exec": "power-profile-waybar",
+        "exec": "/home/sohan/.local/bin/power-profile-waybar",
         "return-type": "json",
         "interval": 5,
-        "on-click": "power-profile-cycle",
+        "on-click": "/home/sohan/.local/bin/power-profile-cycle",
         "tooltip": true
     }
 }
