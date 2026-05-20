@@ -80,7 +80,7 @@ bindsym $mod+s exec sxiv
 bindsym $mod+Escape exec $lock
 
 # ── Fenêtres ──────────────────────────────────────────────────────────────────
-bindsym $mod+q kill
+bindsym $mod+Mod1+q kill
 bindsym Mod1+Tab exec /home/sohan/.cargo/bin/swayr switch-window
 bindsym $mod+f exec dolphin
 

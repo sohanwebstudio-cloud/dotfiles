@@ -62,9 +62,14 @@ window#waybar {
 
 #cpu    { color: @green; padding: 0 8px; }
 #memory { color: @yellow; padding: 0 8px; }
-#battery { padding: 0 8px; }
-#battery.warning  { color: @yellow; }
-#battery.critical { color: @red; }
+#battery           { padding: 0 8px; color: @green; }
+#battery.good      { color: @text; }
+#battery.warning   { color: @yellow; }
+#battery.critical  { color: @red; animation-name: blink; animation-duration: 1s; animation-timing-function: steps(1); animation-iteration-count: infinite; }
+#battery.charging  { color: @green; }
+#battery.full      { color: @green; }
+
+@keyframes blink { to { color: transparent; } }
 
 #network    { color: @blue; padding: 0 8px; }
 #pulseaudio { color: @mauve; padding: 0 8px; }

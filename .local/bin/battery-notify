@@ -1,0 +1,19 @@
+#!/bin/bash
+NOTIFIED=""
+
+while true; do
+    CAPACITY=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null)
+    STATUS=$(cat /sys/class/power_supply/BAT*/status 2>/dev/null)
+
+    if [[ "$STATUS" == "Charging" || "$STATUS" == "Full" ]]; then
+        NOTIFIED=""
+    elif [[ "$CAPACITY" -le 10 && "$NOTIFIED" != "10" ]]; then
+        notify-send -u critical "Batterie critique" "${CAPACITY}% — branche-toi maintenant" -i battery-caution
+        NOTIFIED="10"
+    elif [[ "$CAPACITY" -le 20 && "$NOTIFIED" != "20" && "$NOTIFIED" != "10" ]]; then
+        notify-send -u normal "Batterie faible" "${CAPACITY}% restants" -i battery-low
+        NOTIFIED="20"
+    fi
+
+    sleep 60
+done

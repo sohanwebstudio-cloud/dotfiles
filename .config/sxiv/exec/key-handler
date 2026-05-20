@@ -1,6 +1,6 @@
 #!/bin/sh
 while read file; do
     case "$1" in
-        "w") /home/sohan/.local/bin/wal -i "$file" && xrdb -merge ~/.cache/wal/colors.Xresources && swaymsg "output * bg \"$file\" fill" ;;
+        "w") /home/sohan/.local/bin/wal -i "$file" && xrdb -merge ~/.cache/wal/colors.Xresources && swaymsg "output * bg \"$file\" fill" && cp ~/.cache/wal/colors-mako ~/.config/mako/config && makoctl reload ;;
     esac
 done
