@@ -54,6 +54,7 @@ exec_always systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
 exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 
 exec swaymsg 'workspace number 2; move workspace to output eDP-1; workspace number 12; workspace number 1'
+exec ~/.local/bin/sway-monitor-watch
 exec rfkill unblock bluetooth
 exec mako
 exec /home/sohan/.local/bin/waybar-start
@@ -72,6 +73,7 @@ bindsym $mod+v exec code
 bindsym $mod+c exec google-chrome --new-window
 bindsym $mod+Shift+o exec flatpak run md.obsidian.Obsidian
 bindsym $mod+mod1+c exec google-chrome --app=https://calendar.google.com
+bindsym $mod+mod1+g exec google-chrome --app=https://mail.google.com
 bindsym $mod+space exec $menu
 bindsym $mod+w exec /home/sohan/.local/bin/wallpaper-picker
 bindsym $mod+s exec sxiv

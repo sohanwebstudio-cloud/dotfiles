@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Déplace les workspaces automatiquement quand un écran est branché/débranché
+
+MAIN="eDP-1"
+
+declare -A WS_MAP=(
+    ["HDMI-A-2"]="10 11"
+    ["DP-6"]="12 13"
+)
+
+declare -A LAST_STATE
+
+move_workspaces_to() {
+    local target="$1"
+    shift
+    for ws in "$@"; do
+        swaymsg "workspace number $ws" 2>/dev/null
+        swaymsg "move workspace to output $target" 2>/dev/null
+    done
+}
+
+check_and_update() {
+    local outputs
+    outputs=$(swaymsg -t get_outputs 2>/dev/null)
+    [ -z "$outputs" ] && return
+
+    for output in "${!WS_MAP[@]}"; do
+        local is_active
+        is_active=$(echo "$outputs" | jq -r ".[] | select(.name == \"$output\") | .active // \"false\"")
+        local current_state="${is_active:-false}"
+
+        if [ "${LAST_STATE[$output]}" != "$current_state" ]; then
+            LAST_STATE[$output]="$current_state"
+            read -ra workspaces <<< "${WS_MAP[$output]}"
+
+            if [ "$current_state" = "true" ]; then
+                sleep 1  # laisser Sway appliquer la config output
+                move_workspaces_to "$output" "${workspaces[@]}"
+            else
+                move_workspaces_to "$MAIN" "${workspaces[@]}"
+            fi
+        fi
+    done
+}
+
+# Init — état actuel des outputs
+for output in "${!WS_MAP[@]}"; do
+    is_active=$(swaymsg -t get_outputs 2>/dev/null | jq -r ".[] | select(.name == \"$output\") | .active // \"false\"")
+    LAST_STATE[$output]="${is_active:-false}"
+done
+
+# Écoute les events d'output
+swaymsg -t subscribe '["output"]' 2>/dev/null | while IFS= read -r _; do
+    sleep 0.3
+    check_and_update
+done
