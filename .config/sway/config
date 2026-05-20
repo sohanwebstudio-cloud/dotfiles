@@ -58,7 +58,7 @@ exec rfkill unblock bluetooth
 exec mako
 exec /home/sohan/.local/bin/waybar-start
 exec wl-paste --type text --watch cliphist store
-exec swayrd
+exec /home/sohan/.cargo/bin/swayrd
 exec /usr/libexec/lxqt-policykit-agent
 exec mkdir -p ~/Pictures/Screenshots
 
@@ -79,7 +79,7 @@ bindsym $mod+Escape exec $lock
 
 # ── Fenêtres ──────────────────────────────────────────────────────────────────
 bindsym $mod+q kill
-bindsym Mod1+Tab exec swayr switch-window
+bindsym Mod1+Tab exec /home/sohan/.cargo/bin/swayr switch-window
 bindsym $mod+f exec dolphin
 
 bindsym $mod+m fullscreen toggle
@@ -189,6 +189,7 @@ for_window [app_id="nm-connection-editor"] floating enable
 for_window [title="Picture-in-Picture"] floating enable, sticky enable
 for_window [app_id="org.gnome.Calculator"] floating enable
 for_window [title="khal"] floating enable, resize set 900 600, move position center
+for_window [app_id="waybar-popup"] floating enable, resize set 800 500, move position center
 for_window [app_id="gimp"] floating enable
 
 assign [app_id="code"] workspace number 2

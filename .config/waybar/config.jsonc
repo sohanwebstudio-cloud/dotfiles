@@ -52,7 +52,7 @@
         "tooltip-format": "{controller_alias} — {controller_address}",
         "tooltip-format-connected": "{controller_alias}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}",
-        "on-click": "kitty --title bluetuith bluetuith-wal"
+        "on-click": "swaymsg exec 'kitty --class waybar-popup --title bluetuith bluetuith-wal'"
     },
 
     "network": {
@@ -60,14 +60,14 @@
         "format-ethernet": "󰈀  {ipaddr}",
         "format-disconnected": "󰤭 ",
         "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
-        "on-click": "kitty --title nmtui nmtui-wal"
+        "on-click": "swaymsg exec 'kitty --class waybar-popup --title nmtui nmtui-wal'"
     },
 
     "pulseaudio": {
         "format": "{icon} {volume}%",
         "format-muted": "󰝟 ",
         "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
-        "on-click": "kitty --title pulsemixer pulsemixer",
+        "on-click": "swaymsg exec 'kitty --class waybar-popup --title pulsemixer pulsemixer'",
         "scroll-step": 5
     },
 
