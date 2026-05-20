@@ -16,6 +16,13 @@ meteo() {
 }
 export PATH="$HOME/.cargo/bin:$PATH"
 
+# pnpm
+export PNPM_HOME="/home/sohan/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+
 # Added by LM Studio CLI tool (lms)
 export PATH="$PATH:/home/sohan/.lmstudio/bin"
 export PATH="/home/sohan/.lmstudio/bin:$PATH"

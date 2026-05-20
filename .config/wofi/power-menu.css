@@ -40,12 +40,30 @@ window {
     margin: 2px 4px;
 }
 
-#entry:selected {
+#entry:selected,
+#entry:focus,
+#entry:hover {
     background-color: alpha(@color1, 0.30);
     border-left: 3px solid @color1;
 }
 
-#entry:selected #text {
+#entry:selected #text,
+#entry:focus #text,
+#entry:hover #text {
     color: @color4;
     font-weight: bold;
+}
+
+.entry:selected,
+.entry:focus,
+.entry:hover,
+row:selected,
+row:selected > *,
+row:focus,
+button:selected,
+button:focus {
+    background-color: @color5 !important;
+    color: @background !important;
+    box-shadow: none !important;
+    outline: none !important;
 }

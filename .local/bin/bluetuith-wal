@@ -1,3 +1,3 @@
 #!/bin/sh
 [ -f "$HOME/.cache/wal/sequences" ] && cat "$HOME/.cache/wal/sequences"
-exec /home/sohan/.local/bin/bluetuith
+exec /usr/local/bin/bluetuith

@@ -22,4 +22,4 @@ fullscale=,cyan
 helpline=black,white
 roottext=black,white
 "
-exec nmtui
+exec /usr/bin/nmtui
