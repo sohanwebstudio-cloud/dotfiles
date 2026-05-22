@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 import "."
@@ -12,7 +13,7 @@ PanelWindow {
     anchors { top: true; bottom: true; left: true; right: true }
     exclusiveZone: 0
     color: Qt.rgba(0, 0, 0, 0.55)
-    focusable: true
+    WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     Item {
         anchors.fill: parent

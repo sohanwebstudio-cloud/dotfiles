@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Layouts
@@ -12,7 +13,7 @@ PanelWindow {
     anchors { top: true; bottom: true; left: true; right: true }
     exclusiveZone: 0
     color: Qt.rgba(0.027, 0.02, 0, 0.92)
-    focusable: true
+    WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     Item {
         anchors.fill: parent
@@ -79,11 +80,21 @@ PanelWindow {
 
                         onTextChanged: {
                             launcher.query = text.toLowerCase()
-                            launcher.selectedIdx = 0
+                            launcher.selectedIdx = firstVisibleIdx()
                         }
 
-                        Keys.onUpPressed:     launcher.selectedIdx = Math.max(0, launcher.selectedIdx - 1)
-                        Keys.onDownPressed:   launcher.selectedIdx = Math.min(appRepeater.count - 1, launcher.selectedIdx + 1)
+                        Keys.onUpPressed: {
+                            for (var i = launcher.selectedIdx - 1; i >= 0; i--) {
+                                var it = appRepeater.itemAt(i)
+                                if (it && it.matches) { launcher.selectedIdx = i; break }
+                            }
+                        }
+                        Keys.onDownPressed: {
+                            for (var i = launcher.selectedIdx + 1; i < appRepeater.count; i++) {
+                                var it = appRepeater.itemAt(i)
+                                if (it && it.matches) { launcher.selectedIdx = i; break }
+                            }
+                        }
                         Keys.onReturnPressed: launchSelected()
                         Keys.onEscapePressed: launcher.visible = false
                     }
@@ -177,11 +188,18 @@ PanelWindow {
     }
 
     // ── Lancement ────────────────────────────────────────────────────────
-    function launchSelected() {
-        // Trouve le premier item visible avec index === selectedIdx
+    function firstVisibleIdx() {
         for (var i = 0; i < appRepeater.count; i++) {
             var item = appRepeater.itemAt(i)
-            if (item && item.visible && item.index === launcher.selectedIdx) {
+            if (item && item.matches) return i
+        }
+        return 0
+    }
+
+    function launchSelected() {
+        for (var i = 0; i < appRepeater.count; i++) {
+            var item = appRepeater.itemAt(i)
+            if (item && item.matches && i === launcher.selectedIdx) {
                 doLaunch(item.modelData)
                 return
             }
