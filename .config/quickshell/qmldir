@@ -1,4 +1,5 @@
 singleton Colors 1.0 Colors.qml
+singleton SystemMetrics 1.0 SystemMetrics.qml
 Bar 1.0 Bar.qml
 BarPill 1.0 BarPill.qml
 Notifications 1.0 Notifications.qml

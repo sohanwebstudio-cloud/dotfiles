@@ -22,44 +22,36 @@ PanelWindow {
     // ── State ────────────────────────────────────────────────────────────
 
     property string windowTitle: ""
-    property int    cpuPct:      0
-    property int    memPct:      0
-    property string memStr:      "0/64G"
-    property string batPct:      "?"
-    property string batStatus:   "?"
-    property string netName:     "?"
-    property string ppText:      ""
-    property string khalText:    ""
-    property int    volPct:      0
-    property bool   volMuted:    false
-    property int    gpuPct:      0
-    property int    gpuVram:     0
-    property int    gpuVramTotal: 4096
+    property string ppText:    ""
+    property string khalText:  ""
 
     property bool   batNotif20:  false
     property bool   batNotif10:  false
 
-    onBatPctChanged: {
-        var p = parseInt(batPct)
-        if (isNaN(p)) return
-        if (batStatus === "Charging" || batStatus === "Full") {
-            batNotif20 = false
-            batNotif10 = false
-            return
-        }
-        if (p <= 10 && !batNotif10) {
-            batNotif10 = true
-            batNotif20 = true
-            Qt.createQmlObject(
-                'import Quickshell.Io; Process { command: ["notify-send", "-u", "critical", "-t", "0", "Batterie critique !", "10% restant — branchez le chargeur maintenant."]; running: true }',
-                bar, "batNotif10"
-            )
-        } else if (p <= 20 && !batNotif20) {
-            batNotif20 = true
-            Qt.createQmlObject(
-                'import Quickshell.Io; Process { command: ["notify-send", "-u", "normal", "-t", "8000", "Batterie faible", "20% restant."]; running: true }',
-                bar, "batNotif20"
-            )
+    Connections {
+        target: SystemMetrics
+        function onBatPctChanged() {
+            var p = parseInt(SystemMetrics.batPct)
+            if (isNaN(p)) return
+            if (SystemMetrics.batStatus === "Charging" || SystemMetrics.batStatus === "Full") {
+                bar.batNotif20 = false
+                bar.batNotif10 = false
+                return
+            }
+            if (p <= 10 && !bar.batNotif10) {
+                bar.batNotif10 = true
+                bar.batNotif20 = true
+                Qt.createQmlObject(
+                    'import Quickshell.Io; Process { command: ["notify-send", "-u", "critical", "-t", "0", "Batterie critique !", "10% restant — branchez le chargeur maintenant."]; running: true }',
+                    bar, "batNotif10"
+                )
+            } else if (p <= 20 && !bar.batNotif20) {
+                bar.batNotif20 = true
+                Qt.createQmlObject(
+                    'import Quickshell.Io; Process { command: ["notify-send", "-u", "normal", "-t", "8000", "Batterie faible", "20% restant."]; running: true }',
+                    bar, "batNotif20"
+                )
+            }
         }
     }
 
@@ -81,10 +73,10 @@ PanelWindow {
         return "BAL"
     }
 
-    // Battery icon (from sysmon.sh data)
+    // Battery icon
     property string batIcon: {
-        if (batStatus === "Charging" || batStatus === "Full") return "󰂄"
-        var p = parseInt(batPct)
+        if (SystemMetrics.batStatus === "Charging" || SystemMetrics.batStatus === "Full") return "󰂄"
+        var p = parseInt(SystemMetrics.batPct)
         if (isNaN(p)) return "󱉝"
         if (p > 90) return "󰁹"
         if (p > 70) return "󰂀"
@@ -109,29 +101,6 @@ PanelWindow {
         }
     }
 
-    // System metrics (cpu, mem, net, bat percentage)
-    Process {
-        command: ["/home/sohan/.config/quickshell/scripts/sysmon.sh"]
-        running: true
-        stdout: SplitParser {
-            onRead: line => {
-                try {
-                    var d = JSON.parse(line)
-                    bar.cpuPct  = d.cpu  || 0
-                    bar.memPct  = d.mem  || 0
-                    bar.memStr  = (d.mu || "0") + "/" + (d.mt || "64") + "G"
-                    bar.batPct  = d.bat  || "?"
-                    bar.batStatus = d.bs || "?"
-                    bar.netName = d.net  || "offline"
-                    bar.volPct      = d.vol  || 0
-                    bar.volMuted    = d.vm   || false
-                    bar.gpuPct      = d.gpu  || 0
-                    bar.gpuVram     = d.gv   || 0
-                    bar.gpuVramTotal = d.gvt || 4096
-                } catch(e) {}
-            }
-        }
-    }
 
     // Khal calendar — refresh every 5 min
     Process {
@@ -273,8 +242,8 @@ PanelWindow {
 
         // Volume (scroll to adjust, click to mute)
         BarPill {
-            text: (bar.volMuted ? "MUTE" : "VOL") + " " + bar.volPct + "%"
-            color: bar.volMuted ? Colors.textDim : Colors.text
+            text: (SystemMetrics.volMuted ? "MUTE" : "VOL") + " " + SystemMetrics.volPct + "%"
+            color: SystemMetrics.volMuted ? Colors.textDim : Colors.text
             onWheel: event => {
                 if (bar.sinkAudio) {
                     var d = event.angleDelta.y > 0 ? 0.03 : -0.03
@@ -303,8 +272,8 @@ PanelWindow {
 
         // Network
         BarPill {
-            property bool online: bar.netName !== "offline"
-            text: (online ? "󰤨 " : "󰤭 ") + bar.netName
+            property bool online: SystemMetrics.netName !== "offline"
+            text: (online ? "󰤨 " : "󰤭 ") + SystemMetrics.netName
             color: online ? Colors.text : Colors.textDim
             Layout.maximumWidth: 130
             onClicked: Qt.createQmlObject(
@@ -315,28 +284,28 @@ PanelWindow {
 
         // CPU
         BarPill {
-            text: "CPU " + bar.cpuPct + "%"
-            color: bar.cpuPct > 80 ? Colors.accent : bar.cpuPct > 50 ? Colors.textBright : Colors.text
+            text: "CPU " + SystemMetrics.cpuPct + "%"
+            color: SystemMetrics.cpuPct > 80 ? Colors.accent : SystemMetrics.cpuPct > 50 ? Colors.textBright : Colors.text
         }
 
         // GPU
         BarPill {
-            text: "GPU " + bar.gpuPct + "%"
-            color: bar.gpuPct > 70 ? Colors.accent : bar.gpuPct > 30 ? Colors.textBright : Colors.text
+            text: "GPU " + SystemMetrics.gpuPct + "%"
+            color: SystemMetrics.gpuPct > 70 ? Colors.accent : SystemMetrics.gpuPct > 30 ? Colors.textBright : Colors.text
         }
 
         // Memory
         BarPill {
-            text: "MEM " + bar.memStr
-            color: bar.memPct > 75 ? Colors.accent : bar.memPct > 50 ? Colors.textBright : Colors.text
+            text: "MEM " + SystemMetrics.memStr
+            color: SystemMetrics.memPct > 75 ? Colors.accent : SystemMetrics.memPct > 50 ? Colors.textBright : Colors.text
         }
 
         // Battery
         BarPill {
-            text: bar.batIcon + " " + bar.batPct + "%"
+            text: bar.batIcon + " " + SystemMetrics.batPct + "%"
             color: {
-                var p = parseInt(bar.batPct)
-                if (bar.batStatus === "Charging") return Colors.green
+                var p = parseInt(SystemMetrics.batPct)
+                if (SystemMetrics.batStatus === "Charging") return Colors.green
                 if (p < 20) return Colors.red
                 return Colors.text
             }
