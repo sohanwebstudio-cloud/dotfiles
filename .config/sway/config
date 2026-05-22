@@ -1,21 +1,21 @@
 # ── Variables ─────────────────────────────────────────────────────────────────
 set $mod Mod4
 set $term kitty
-set $menu wofi --show drun
-set $lock swaylock -f --image $(cat /home/sohan/.cache/wal/wal) --scaling fill --ring-color 89b4fa --key-hl-color a6e3a1 --bs-hl-color f38ba8 --inside-color 1e1e2e99 --separator-color 00000000 --text-color cdd6f4
+set $menu quickshell ipc call shell toggleLauncher
+set $lock gtklock
 
-# ── Couleurs (Catppuccin Mocha) ────────────────────────────────────────────────
-set $background #1e1e2e
-set $foreground #cdd6f4
-set $color1     #89b4fa
-set $color2     #a6e3a1
-set $color3     #fab387
-set $color8     #45475a
+# ── Couleurs (Amber Phosphor) ──────────────────────────────────────────────────
+set $background #070500
+set $foreground #C87A0A
+set $color1     #F0A000
+set $color2     #C87A0A
+set $color3     #C03000
+set $color8     #3A2300
 
 # ── Moniteurs ─────────────────────────────────────────────────────────────────
 # Config auto au premier lancement
 # Après : swaymsg -t get_outputs → éditer ici avec les vrais noms
-exec_always sh -c 'swaymsg output "*" bg "$(cat /home/sohan/.cache/wal/wal 2>/dev/null)" fill'
+exec_always sh -c '[ -f "$HOME/.cache/current-wallpaper" ] && swaymsg "output * bg \"$(cat $HOME/.cache/current-wallpaper)\" fill" || swaymsg output "*" bg "#070500" solid_color'
 
 # Exemples à décommenter une fois les noms connus :
 # output eDP-1    resolution 1920x1080  position 0,0     scale 1
@@ -36,15 +36,15 @@ input type:touchpad {
 }
 
 # ── Apparence ─────────────────────────────────────────────────────────────────
-gaps inner 4
-gaps outer 8
-default_border pixel 2
+gaps inner 6
+gaps outer 6
+default_border pixel 1
 smart_gaps off
 smart_borders on
 
-# Pywal — active / inactive / urgent
+# Amber Phosphor — active / inactive / urgent
 # class                 border      bg          text        indicator   child_border
-client.focused          $color1     $background $foreground $color2     $color1
+client.focused          $color1     $background $foreground $color1     #C87A0A
 client.unfocused        $color8     $background $foreground $color8     $color8
 client.focused_inactive $color8     $background $foreground $color8     $color8
 client.urgent           $color3     $background $foreground $color3     $color3
@@ -56,14 +56,13 @@ exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
 exec swaymsg 'workspace number 2; move workspace to output eDP-1; workspace number 12; workspace number 1'
 exec ~/.local/bin/sway-monitor-watch
 exec rfkill unblock bluetooth
-exec mako
-exec /home/sohan/.local/bin/waybar-start
+exec systemctl --user start quickshell
 exec wl-paste --type text --watch cliphist store
 exec /home/sohan/.cargo/bin/swayrd
 exec /usr/libexec/lxqt-policykit-agent
 exec mkdir -p ~/Pictures/Screenshots
 
-exec_always pkill swayidle; swayidle -w before-sleep '$lock'
+exec_always sh -c 'pkill swayidle; swayidle -w before-sleep "$lock"'
 
 # ── Apps — mêmes raccourcis que GNOME ────────────────────────────────────────
 bindsym $mod+t exec $term

@@ -1,25 +1,3 @@
-#!/bin/sh
-[ -f "$HOME/.cache/wal/sequences" ] && cat "$HOME/.cache/wal/sequences"
-export NEWT_COLORS="
-root=white,black
-border=gray,black
-window=white,black
-shadow=black,black
-title=brightcyan,black
-checkbox=white,black
-button=black,cyan
-compactbutton=white,black
-listbox=white,black
-actlistbox=black,cyan
-textbox=white,black
-acttextbox=black,gray
-label=white,black
-entry=white,black
-disentry=gray,black
-scale=,cyan
-emptyscale=,black
-fullscale=,cyan
-helpline=black,white
-roottext=black,white
-"
-exec /usr/bin/nmtui
+#!/usr/bin/env bash
+cat ~/.cache/wal/sequences 2>/dev/null
+nmtui

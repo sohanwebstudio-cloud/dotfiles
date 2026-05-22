@@ -1,14 +1,9 @@
 #!/bin/bash
+# Usage: theme-switch.sh dark|light
+MODE="${1:-dark}"
 KITTY_CONFIG="$HOME/.config/kitty"
 YAZI_CONFIG="$HOME/.config/yazi"
-SCHEME=$(gsettings get org.gnome.desktop.interface color-scheme)
 
-if [[ "$SCHEME" == "'prefer-dark'" ]]; then
-    cp "$KITTY_CONFIG/dark.conf"       "$KITTY_CONFIG/current-theme.conf"
-    cp "$YAZI_CONFIG/theme-dark.toml"  "$YAZI_CONFIG/theme.toml"
-else
-    cp "$KITTY_CONFIG/light.conf"       "$KITTY_CONFIG/current-theme.conf"
-    cp "$YAZI_CONFIG/theme-light.toml"  "$YAZI_CONFIG/theme.toml"
-fi
-
+cp "$KITTY_CONFIG/$MODE.conf" "$KITTY_CONFIG/current-theme.conf"
+cp "$YAZI_CONFIG/theme-$MODE.toml" "$YAZI_CONFIG/theme.toml"
 pgrep kitty | xargs -r kill -SIGUSR1 2>/dev/null

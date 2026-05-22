@@ -30,9 +30,6 @@ export PATH="/home/sohan/.lmstudio/bin:$PATH"
 # Bat theme
 export BAT_THEME="Monokai Extended Origin"
 
-# pywal — restaure les couleurs et séquences terminal au démarrage
-(cat ~/.cache/wal/sequences &)
-xrdb -merge ~/.cache/wal/colors.Xresources 2>/dev/null
 
 # nmtui — thème calé sur les slots pywal (0-15)
 export NEWT_COLORS="

@@ -1,5 +1,0 @@
-#!/bin/bash
-# Lance Wofi et force le float via Pop Shell (Super+G)
-wofi --show drun &
-sleep 0.35
-ydotool key super+g

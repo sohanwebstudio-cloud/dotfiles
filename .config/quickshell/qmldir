@@ -1,0 +1,6 @@
+singleton Colors 1.0 Colors.qml
+Bar 1.0 Bar.qml
+BarPill 1.0 BarPill.qml
+Notifications 1.0 Notifications.qml
+Launcher 1.0 Launcher.qml
+PowerMenu 1.0 PowerMenu.qml
