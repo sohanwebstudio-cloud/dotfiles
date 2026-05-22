@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-cat ~/.cache/wal/sequences 2>/dev/null
 bluetuith
