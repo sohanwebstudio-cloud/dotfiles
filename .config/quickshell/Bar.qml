@@ -100,9 +100,10 @@ PanelWindow {
         onIpcEvent: event => {
             try {
                 var d = JSON.parse(event.data)
-                if ((d.change === "focus" || d.change === "title") && d.container)
+                var isThis = I3.monitorFor(bar.screen) === I3.focusedMonitor
+                if ((d.change === "focus" || d.change === "title") && d.container && isThis)
                     bar.windowTitle = d.container.name || ""
-                else if (d.change === "close")
+                else if (d.change === "close" && isThis)
                     bar.windowTitle = ""
             } catch(e) {}
         }
