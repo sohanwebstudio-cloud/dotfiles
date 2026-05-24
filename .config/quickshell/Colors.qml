@@ -17,10 +17,10 @@ QtObject {
     readonly property color red:           "#C03000"
 
     readonly property string font:         "VT323"
-    readonly property int   barH:          36
-    readonly property int   sz:            21
-    readonly property int   szSm:          19
-    readonly property int   szLg:          26
-    readonly property int   pad:           10
-    readonly property int   padSm:         6
+    readonly property int   barH:          41
+    readonly property int   sz:            23
+    readonly property int   szSm:          20
+    readonly property int   szLg:          29
+    readonly property int   pad:           12
+    readonly property int   padSm:         7
 }

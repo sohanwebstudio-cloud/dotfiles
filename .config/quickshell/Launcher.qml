@@ -10,6 +10,9 @@ import "."
 PanelWindow {
     id: launcher
 
+    property var targetScreen: null
+    screen: targetScreen
+
     anchors { top: true; bottom: true; left: true; right: true }
     exclusiveZone: 0
     color: Qt.rgba(0.027, 0.02, 0, 0.92)
@@ -30,6 +33,7 @@ PanelWindow {
 
     property string query: ""
     property int selectedIdx: 0
+    property var _seenIds: ({})
 
     // ── Background click ─────────────────────────────────────────────────
     MouseArea {
@@ -128,7 +132,14 @@ PanelWindow {
                             required property var modelData
                             required property int index
 
-                            property bool matches: !modelData.noDisplay && (
+                            property bool _isDup: false
+                            Component.onCompleted: {
+                                var key = modelData.id || modelData.name
+                                if (launcher._seenIds[key]) { _isDup = true }
+                                else { launcher._seenIds[key] = true }
+                            }
+
+                            property bool matches: !_isDup && !modelData.noDisplay && (
                                 launcher.query === "" ||
                                 (modelData.name || "").toLowerCase().includes(launcher.query) ||
                                 (modelData.genericName || "").toLowerCase().includes(launcher.query)
@@ -187,6 +198,8 @@ PanelWindow {
         }
     }
 
+    Process { id: launchProc; running: false }
+
     // ── Lancement ────────────────────────────────────────────────────────
     function firstVisibleIdx() {
         for (var i = 0; i < appRepeater.count; i++) {
@@ -208,12 +221,9 @@ PanelWindow {
 
     function doLaunch(entry) {
         if (!entry || !entry.execString) return
-        var p = Qt.createQmlObject(
-            'import Quickshell.Io; Process { running: false }',
-            launcher, "launchProc"
-        )
-        p.command = ["swaymsg", "exec", "--", entry.execString]
-        p.running = true
+        var cmd = entry.execString.replace(/%[uUfFdDnNickvm]/g, "").trim()
+        launchProc.command = ["swaymsg", "exec", "--", cmd]
+        launchProc.running = true
         launcher.visible = false
     }
 }

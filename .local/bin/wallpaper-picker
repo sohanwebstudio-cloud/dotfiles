@@ -1,2 +1,0 @@
-#!/bin/sh
-sxiv -t $(find ~/Pictures/ -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | sort)

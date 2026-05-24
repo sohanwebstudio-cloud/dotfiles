@@ -10,6 +10,8 @@ import "."
 Scope {
     id: notifScope
 
+    property var targetScreen: null
+
     NotificationServer {
         id: server
         keepOnReload: true
@@ -27,11 +29,12 @@ Scope {
     PanelWindow {
         id: toastPanel
 
+        screen: notifScope.targetScreen
         anchors { top: true; right: true }
         exclusiveZone: 0
         implicitWidth: 340
         implicitHeight: toastColumn.implicitHeight + Colors.pad * 2
-        visible: toastColumn.count > 0
+        visible: toastColumn.count > 0 && notifScope.targetScreen !== null
         color: "transparent"
 
         Column {

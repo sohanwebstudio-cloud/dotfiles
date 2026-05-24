@@ -4,6 +4,8 @@
 
 prev_idle=0
 prev_total=0
+gpu_counter=0
+gpu_util=0; gpu_vram_used=0; gpu_vram_total=4096
 
 while true; do
     # CPU delta
@@ -26,14 +28,17 @@ while true; do
     bat=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo 100)
     bs=$(cat  /sys/class/power_supply/BAT0/status   2>/dev/null || echo "AC")
 
-    # GPU (NVIDIA)
-    gpu_raw=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total \
-        --format=csv,noheader,nounits 2>/dev/null | tr -d ' ')
-    if [ -n "$gpu_raw" ]; then
-        IFS=',' read -r gpu_util gpu_vram_used gpu_vram_total <<< "$gpu_raw"
-    else
-        gpu_util=0; gpu_vram_used=0; gpu_vram_total=4096
+    # GPU (NVIDIA) — sondé toutes les 10s (1 appel nvidia-smi sur 5 itérations)
+    if [ $((gpu_counter % 5)) -eq 0 ]; then
+        gpu_raw=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total \
+            --format=csv,noheader,nounits 2>/dev/null | tr -d ' ')
+        if [ -n "$gpu_raw" ]; then
+            IFS=',' read -r gpu_util gpu_vram_used gpu_vram_total <<< "$gpu_raw"
+        else
+            gpu_util=0; gpu_vram_used=0; gpu_vram_total=4096
+        fi
     fi
+    gpu_counter=$((gpu_counter + 1))
 
     # Network (wifi SSID or wired connection name)
     net=$(nmcli -t -f active,ssid dev wifi 2>/dev/null \

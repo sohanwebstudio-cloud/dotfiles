@@ -2,7 +2,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.I3
 import Quickshell.Services.Pipewire
-import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
 import Quickshell.Bluetooth
 import Quickshell.Networking
@@ -41,16 +40,10 @@ PanelWindow {
             if (p <= 10 && !bar.batNotif10) {
                 bar.batNotif10 = true
                 bar.batNotif20 = true
-                Qt.createQmlObject(
-                    'import Quickshell.Io; Process { command: ["notify-send", "-u", "critical", "-t", "0", "Batterie critique !", "10% restant — branchez le chargeur maintenant."]; running: true }',
-                    bar, "batNotif10"
-                )
+                batNotif10Proc.running = true
             } else if (p <= 20 && !bar.batNotif20) {
                 bar.batNotif20 = true
-                Qt.createQmlObject(
-                    'import Quickshell.Io; Process { command: ["notify-send", "-u", "normal", "-t", "8000", "Batterie faible", "20% restant."]; running: true }',
-                    bar, "batNotif20"
-                )
+                batNotif20Proc.running = true
             }
         }
     }
@@ -115,6 +108,15 @@ PanelWindow {
     }
     Timer { interval: 300000; running: true; repeat: true; onTriggered: khalProc.running = true }
 
+    // Processes réutilisables — évite les fuites Qt.createQmlObject
+    Process { id: batNotif10Proc; command: ["notify-send", "-u", "critical", "-t", "0", "Batterie critique !", "10% restant — branchez le chargeur maintenant."]; running: false }
+    Process { id: batNotif20Proc; command: ["notify-send", "-u", "normal",   "-t", "8000", "Batterie faible", "20% restant."]; running: false }
+    Process { id: khalOpenProc;   command: ["kitty", "--class", "qs-popup", "-e", "khal", "interactive"]; running: false }
+    Process { id: ppCycleProc;    command: ["/home/sohan/.local/bin/power-profile-cycle"]; running: false }
+    Process { id: btOpenProc;     command: ["kitty", "--class", "qs-popup", "-e", "/home/sohan/.local/bin/bluetuith-wal"]; running: false }
+    Process { id: netOpenProc;    command: ["kitty", "--class", "qs-popup", "-e", "/home/sohan/.local/bin/nmtui-wal"]; running: false }
+    Process { id: powerMenuProc;  command: ["quickshell", "ipc", "call", "shell", "togglePowerMenu"]; running: false }
+
     // ── Bottom border ────────────────────────────────────────────────────
     Rectangle {
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
@@ -135,25 +137,24 @@ PanelWindow {
         }
     }
 
-    // ── Main layout ──────────────────────────────────────────────────────
-    // ── Clock — vraiment centré dans la barre ────────────────────────────
     SystemClock { id: clock; precision: SystemClock.Seconds }
 
+    // ── Horloge ancrée AU CENTRE ABSOLU de la bar ────────────────────────
     Text {
-        id: clockText
         anchors.centerIn: parent
+        z: 5
         text: Qt.formatDateTime(clock.date, "ddd dd MMM  hh:mm:ss").toUpperCase()
         color: Colors.text
-        font { family: "VT323"; pixelSize: 22; letterSpacing: 2 }
+        font { family: Colors.font; pixelSize: Colors.sz; letterSpacing: 2 }
     }
 
-    // ── Left + Right en RowLayout ────────────────────────────────────────
+    // ── LEFT block : workspaces + window title ───────────────────────────
     RowLayout {
-        anchors { fill: parent; leftMargin: Colors.padSm; rightMargin: Colors.padSm }
+        id: leftRow
+        anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: Colors.padSm }
         spacing: 0
 
         // ─ LEFT: workspaces + window title ──────────────────────────────
-
         Repeater {
             model: I3.workspaces
 
@@ -171,7 +172,6 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
 
                 Text {
-                    id: wsText
                     anchors.centerIn: parent
                     text:  modelData.name
                     color: active ? Colors.gold : urgent ? Colors.accent : Colors.textDim
@@ -190,7 +190,6 @@ PanelWindow {
             }
         }
 
-        // separator + window title
         Text {
             text: " › "
             color: Colors.border
@@ -202,25 +201,24 @@ PanelWindow {
             color: Colors.text
             font { family: Colors.font; pixelSize: Colors.szSm }
             elide: Text.ElideRight
-            Layout.maximumWidth: 600
+            Layout.maximumWidth: 400
         }
 
-        Item { Layout.fillWidth: true }
+    }
 
-        // ─ RIGHT: widgets ────────────────────────────────────────────────
+    // ── RIGHT block : pills ──────────────────────────────────────────────
+    RowLayout {
+        id: rightRow
+        anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: Colors.padSm }
+        spacing: 0
 
-        // Khal
         BarPill {
             text: bar.khalText
             color: Colors.text
             visible: text.length > 0
-            onClicked: Qt.createQmlObject(
-                'import Quickshell.Io; Process { command: ["kitty", "--class", "qs-popup", "-e", "khal", "interactive"]; running: true }',
-                bar, "khalOpen"
-            )
+            onClicked: if (!khalOpenProc.running) khalOpenProc.running = true
         }
 
-        // Power Profile (click to cycle)
         BarPill {
             text: bar.ppIcon + " " + bar.ppName
             color: {
@@ -229,18 +227,9 @@ PanelWindow {
                 if (p === PowerProfile.PowerSaver)  return Colors.green
                 return Colors.text
             }
-            onClicked: {
-                var p = Qt.createQmlObject(
-                    'import Quickshell.Io; Process { running: false }',
-                    bar, "ppCycle"
-                )
-                p.command = ["/home/sohan/.local/bin/power-profile-cycle"]
-                p.running = true
-            }
+            onClicked: if (!ppCycleProc.running) ppCycleProc.running = true
         }
 
-
-        // Volume (scroll to adjust, click to mute)
         BarPill {
             text: (SystemMetrics.volMuted ? "MUTE" : "VOL") + " " + SystemMetrics.volPct + "%"
             color: SystemMetrics.volMuted ? Colors.textDim : Colors.text
@@ -253,7 +242,6 @@ PanelWindow {
             onClicked: { if (bar.sinkAudio) bar.sinkAudio.muted = !bar.sinkAudio.muted }
         }
 
-        // Bluetooth
         BarPill {
             property var adapter: Bluetooth.defaultAdapter
             property bool btConnected: {
@@ -264,43 +252,32 @@ PanelWindow {
             }
             text: btConnected ? "󰂱" : (adapter?.enabled ? "󰂯" : "󰂲")
             color: btConnected ? Colors.textBright : Colors.textDim
-            onClicked: Qt.createQmlObject(
-                'import Quickshell.Io; Process { command: ["kitty", "--class", "qs-popup", "-e", "/home/sohan/.local/bin/bluetuith-wal"]; running: true }',
-                bar, "btOpen"
-            )
+            onClicked: if (!btOpenProc.running) btOpenProc.running = true
         }
 
-        // Network
         BarPill {
             property bool online: SystemMetrics.netName !== "offline"
             text: (online ? "󰤨 " : "󰤭 ") + SystemMetrics.netName
             color: online ? Colors.text : Colors.textDim
             Layout.maximumWidth: 130
-            onClicked: Qt.createQmlObject(
-                'import Quickshell.Io; Process { command: ["kitty", "--class", "qs-popup", "-e", "/home/sohan/.local/bin/nmtui-wal"]; running: true }',
-                bar, "netOpen"
-            )
+            onClicked: if (!netOpenProc.running) netOpenProc.running = true
         }
 
-        // CPU
         BarPill {
             text: "CPU " + SystemMetrics.cpuPct + "%"
             color: SystemMetrics.cpuPct > 80 ? Colors.accent : SystemMetrics.cpuPct > 50 ? Colors.textBright : Colors.text
         }
 
-        // GPU
         BarPill {
             text: "GPU " + SystemMetrics.gpuPct + "%"
             color: SystemMetrics.gpuPct > 70 ? Colors.accent : SystemMetrics.gpuPct > 30 ? Colors.textBright : Colors.text
         }
 
-        // Memory
         BarPill {
             text: "MEM " + SystemMetrics.memStr
             color: SystemMetrics.memPct > 75 ? Colors.accent : SystemMetrics.memPct > 50 ? Colors.textBright : Colors.text
         }
 
-        // Battery
         BarPill {
             text: bar.batIcon + " " + SystemMetrics.batPct + "%"
             color: {
@@ -311,30 +288,6 @@ PanelWindow {
             }
         }
 
-        // System Tray
-        Repeater {
-            model: SystemTray.items
-            delegate: Item {
-                required property var modelData
-                width: 20; height: Colors.barH
-                Layout.alignment: Qt.AlignVCenter
-
-                Image {
-                    anchors.centerIn: parent
-                    source: modelData.icon
-                    width: 14; height: 14
-                    smooth: true
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onClicked: event => modelData.display(bar, mapToItem(null, 0, 0).x, mapToItem(null, 0, 0).y)
-                }
-            }
-        }
-
-        // Power button
         Rectangle {
             width: 24; height: Colors.barH - 4
             color: "transparent"
@@ -344,17 +297,12 @@ PanelWindow {
                 anchors.centerIn: parent
                 text: "⏻"
                 color: Colors.red
-                font { family: Colors.font; pixelSize: Colors.szLg }
+                font { family: Colors.font; pixelSize: Colors.sz }
             }
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: {
-                    var p = Qt.createQmlObject(
-                        'import Quickshell.Io; Process { command: ["quickshell","ipc","call","shell","togglePowerMenu"]; running: true }',
-                        bar, "powerBtn"
-                    )
-                }
+                onClicked: if (!powerMenuProc.running) powerMenuProc.running = true
             }
         }
     }

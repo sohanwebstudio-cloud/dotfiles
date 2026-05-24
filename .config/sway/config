@@ -2,7 +2,7 @@
 set $mod Mod4
 set $term kitty
 set $menu quickshell ipc call shell toggleLauncher
-set $lock gtklock
+set $lock 'swaylock -f -c 070500'
 
 # ── Couleurs (Amber Phosphor) ──────────────────────────────────────────────────
 set $background #070500
@@ -15,7 +15,7 @@ set $color8     #3A2300
 # ── Moniteurs ─────────────────────────────────────────────────────────────────
 # Config auto au premier lancement
 # Après : swaymsg -t get_outputs → éditer ici avec les vrais noms
-exec_always sh -c '[ -f "$HOME/.cache/current-wallpaper" ] && swaymsg "output * bg \"$(cat $HOME/.cache/current-wallpaper)\" fill" || swaymsg output "*" bg "#070500" solid_color'
+exec_always waypaper --restore
 
 exec_always pkill -SIGUSR1 kanshi 2>/dev/null || kanshi &
 
@@ -50,7 +50,7 @@ exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
 exec swaymsg 'workspace number 2; move workspace to output eDP-1; workspace number 12; workspace number 1'
 exec ~/.local/bin/sway-monitor-watch
 exec rfkill unblock bluetooth
-exec systemctl --user start quickshell
+exec quickshell
 exec wl-paste --type text --watch cliphist store
 exec /home/sohan/.cargo/bin/swayrd
 exec /usr/libexec/lxqt-policykit-agent
@@ -68,8 +68,7 @@ bindsym $mod+Shift+o exec flatpak run md.obsidian.Obsidian
 bindsym $mod+mod1+c exec google-chrome --app=https://calendar.google.com
 bindsym $mod+mod1+g exec google-chrome --app=https://mail.google.com
 bindsym $mod+space exec $menu
-bindsym $mod+w exec /home/sohan/.local/bin/wallpaper-picker
-bindsym $mod+s exec sxiv
+bindsym $mod+w exec /home/sohan/.local/bin/waypaper
 bindsym $mod+Escape exec $lock
 
 # ── Fenêtres ──────────────────────────────────────────────────────────────────

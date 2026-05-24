@@ -10,10 +10,15 @@ import "."
 PanelWindow {
     id: powerMenu
 
+    property var targetScreen: null
+    screen: targetScreen
+
     anchors { top: true; bottom: true; left: true; right: true }
     exclusiveZone: 0
     color: Qt.rgba(0, 0, 0, 0.55)
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
+    Process { id: pmProc; running: false }
 
     Item {
         anchors.fill: parent
@@ -89,12 +94,8 @@ PanelWindow {
                         hoverEnabled: true
                         onClicked: {
                             powerMenu.visible = false
-                            var p = Qt.createQmlObject(
-                                'import Quickshell.Io; Process { running: false }',
-                                powerMenu, "pmProc"
-                            )
-                            p.command = modelData.cmd
-                            p.running = true
+                            pmProc.command = modelData.cmd
+                            pmProc.running = true
                         }
                     }
                 }

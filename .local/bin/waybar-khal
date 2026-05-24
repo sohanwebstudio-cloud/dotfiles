@@ -1,0 +1,9 @@
+#!/bin/bash
+# Output next khal event as JSON for Quickshell bar
+next=$(khal list --format "{start-time} {title}" --day-format "" 2>/dev/null | grep -v "^$" | head -1)
+if [ -n "$next" ]; then
+    next=$(printf '%s' "$next" | sed 's/"/\\"/g')
+    printf '{"text": "󰃭 %s"}\n' "$next"
+else
+    printf '{"text": ""}\n'
+fi
